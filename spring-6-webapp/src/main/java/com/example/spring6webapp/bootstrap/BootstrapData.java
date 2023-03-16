@@ -26,21 +26,25 @@ public class BootstrapData implements CommandLineRunner {
     public void run(String... args) throws Exception {
         List<Author> authors = new ArrayList<>();
         List<Book> books = new ArrayList<>();
+
         IntStream.range(0, 5).forEachOrdered(n -> {
             // author
             Author newAuthor = new Author();
             newAuthor.setLastName("Ta");
             newAuthor.setFirstName("Son " + n);
-            authors.add(newAuthor);
+            authors.add(authorRepository.save(newAuthor));
 
             // book
             Book newBook = new Book();
             newBook.setTitle("Quyen sach thu " + n);
             newBook.setIsbn("12345" + n);
-            books.add(newBook);
+            books.add(bookRepository.save(newBook));
         });
 
+        IntStream.range(0, authors.size()).forEachOrdered(i -> {
+            authors.get(i).getBooks().add(books.get(i));
+        });
         authorRepository.saveAll(authors);
-        bookRepository.saveAll(books);
+        System.out.println(authorRepository.count());
     }
 }
